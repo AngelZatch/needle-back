@@ -4,7 +4,9 @@
   "description": "back",
   "main": "index.ts",
   "scripts": {
-    "test": "mocha -r ts-node/register test/**/*.test.ts"
+    "test": "mocha -r ts-node/register test/**/*.test.ts",
+    "tsc": "./node_modules/.bin/tsc",
+    "start": "tsc-watch --onSuccess \"node ./dist/index.js\""
   },
   "repository": {
     "type": "git",
