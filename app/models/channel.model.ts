@@ -11,7 +11,6 @@ export class Channel {
     @Unique()
     title!: string;
 
-
     @Property({ onCreate: () => new Date() })
     createdAt: Date = new Date();
 
