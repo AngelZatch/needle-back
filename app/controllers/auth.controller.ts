@@ -21,7 +21,7 @@ router.post("/signup", async (request, response) => {
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
         
         const user = new User(nickname, hashedPassword, mail);
-        const createdUser = await DI.userRepository.persistAndFlush(user);
+        await DI.userRepository.persistAndFlush(user);
         
         response.json(user);
     } catch (error) {
