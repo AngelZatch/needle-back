@@ -1,7 +1,7 @@
 import { MikroORM, EntityManager, EntityRepository, RequestContext } from '@mikro-orm/core';
 import express from 'express';
 
-import { AuthController, ChannelController } from './controllers';
+import { AuthController, ChannelController, UserController } from './controllers';
 import { Channel } from './models/channel.model';
 import { Tag } from './models/tag.model';
 import { User } from './models/user.model';
@@ -40,6 +40,7 @@ const isDevEnv = process.env.NODE_ENV !== 'production';
         app.use((req, res, next) => RequestContext.create(DI.orm.em, next));
         app.use("/auth", AuthController);
         app.use("/channels", ChannelController);
+        app.use("/users", UserController);
         app.use((req, res) => res.status(404).json({ message: 'Where are you trying to go?' }));
         app.listen(+PORT, () => {
             console.log(`App has started, listening on port ${PORT}`);
