@@ -12,21 +12,46 @@ router.post("/signup", async (request, response) => {
     if (!mail || !password || !nickname) {
         return response.status(412).send('You need to provide a mail address, a password and a nickname to register');
     }
-    
+
     if (await DI.userRepository.findOne({ mail })) {
         return response.status(409).send('The mail address is invalid or already in use.')
     }
 
     try {
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-        
+
         const user = new User(nickname, hashedPassword, mail);
         await DI.userRepository.persistAndFlush(user);
-        
+
         response.json(user);
     } catch (error) {
         return response.status(400).json({ message: error.message });
     }
+})
+
+router.post('/login', async (request, response) => {
+    const { mail, password } = request.body;
+
+    if (!mail || !password) {
+        return response.status(412).send('You need to provide a mail address and a password to login.')
+    }
+
+    try {
+        const user = await DI.userRepository.findOne({ mail });
+        const passwordComparison = user ? await bcrypt.compare(password, user!.password) : false;
+
+        if (!user || !passwordComparison) {
+            return response.status(409).send('The mail address or the password is incorrect.')
+        }
+
+        await DI.userRepository.persistAndFlush(user);
+
+        response.json(user);
+
+    } catch (error) {
+        return response.status(400).json({ message: error.message });
+    }
+
 })
 
 export const AuthController = router;
