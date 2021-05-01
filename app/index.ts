@@ -2,6 +2,8 @@ import Application from './app';
 import ormConfig from './orm.config';
 import { devInit, migrate } from './utils/dbGenerator';
 
+require('dotenv').config();
+
 const PORT = process.env.PORT || 8000;
 const isDevEnv = process.env.NODE_ENV !== 'production';
 
