@@ -1,4 +1,5 @@
-import { Entity, PrimaryKey, Property, Unique } from "@mikro-orm/core";
+import { Collection, Entity, ManyToMany, PrimaryKey, Property, Unique } from "@mikro-orm/core";
+import { Tag } from "./tag.model";
 
 @Entity()
 export class User {
@@ -20,4 +21,7 @@ export class User {
 
     @Property({ onUpdate: () => new Date() })
     updatedAt: Date = new Date();
+
+    @ManyToMany()
+    tags = new Collection<Tag>(this);
 }
