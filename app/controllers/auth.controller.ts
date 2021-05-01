@@ -16,11 +16,7 @@ router.post("/signup", async (request, response) => {
     if (await DI.userRepository.findOne({ mail })) {
         return response.status(409).send('The mail address is invalid or already in use.')
     }
-
-    if (await DI.userRepository.findOne({ nickname })) {
-        return response.status(409).send('This nickname is already in use.');
-    }
-
+    
     try {
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
         
