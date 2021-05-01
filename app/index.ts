@@ -33,8 +33,8 @@ const isDevEnv = process.env.NODE_ENV !== 'production';
 
         app.use(express.json())
         app.use((req, res, next) => RequestContext.create(DI.orm.em, next));
-        app.use("/", (req, res) => res.status(200).send('HELLO'));
         app.use("/auth", AuthController);
+        app.use((req, res) => res.status(404).json({ message: 'Where are you trying to go?' }));
         app.listen(+PORT, () => {
             console.log(`App has started, listening on port ${PORT}`);
         });
