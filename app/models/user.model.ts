@@ -10,7 +10,7 @@ export class User {
     @Unique()
     mail!: string;
 
-    @Property()
+    @Property({ hidden: true })
     password!: string;
 
     @Property()
@@ -24,4 +24,10 @@ export class User {
 
     @ManyToMany()
     tags = new Collection<Tag>(this);
+
+    constructor(nickname: string, password: string, mail: string) {
+        this.nickname = nickname;
+        this.password = password;
+        this.mail = mail;
+    }
 }
