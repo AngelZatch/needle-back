@@ -10,6 +10,7 @@ export class User {
     @Unique()
     mail!: string;
 
+    @Property({ hidden: true })
     password!: string;
 
     @Property()
