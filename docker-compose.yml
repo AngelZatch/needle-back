@@ -4,6 +4,8 @@ services:
     db:
         image: postgres
         container_name: needle_postgres
+        ports:
+            - "5432:5432"
         environment:
             POSTGRES_PASSWORD: 63sd81za3x9c3z2
         volumes:
@@ -12,6 +14,8 @@ services:
     redis:
         image: redis
         container_name: needle_redis
+        ports:
+            - "6379:6379"
 
 volumes:
     needle-data:
