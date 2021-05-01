@@ -37,21 +37,13 @@ router.post('/login', async (request, response) => {
     }
 
     try {
-        const user = await DI.userRepository.findOne({ mail });
-        const passwordComparison = user ? await bcrypt.compare(password, user!.password) : false;
-
-        if (!user || !passwordComparison) {
-            return response.status(409).send('The mail address or the password is incorrect.')
-        }
-
-        await DI.userRepository.persistAndFlush(user);
+        const user = await DI.userRepository.findOneOrFail({ mail });
+        await bcrypt.compare(password, user!.password);
 
         response.json(user);
-
     } catch (error) {
-        return response.status(400).json({ message: error.message });
+        return response.status(400).json({ message: 'Your credentials are invalid' });
     }
-
 })
 
 export const AuthController = router;
