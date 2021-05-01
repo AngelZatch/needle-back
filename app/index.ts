@@ -1,5 +1,6 @@
 import { MikroORM, EntityManager, EntityRepository, RequestContext } from '@mikro-orm/core';
 import express from 'express';
+import * as dotenv from 'dotenv';
 
 import { AuthController, UserController } from './controllers';
 import { Tag } from './models/tag.model';
@@ -7,7 +8,7 @@ import { User } from './models/user.model';
 import ormConfig from './orm.config';
 import { devInit, migrate } from './utils/dbGenerator';
 
-require('dotenv').config();
+dotenv.config();
 
 export const DI = {} as {
     orm: MikroORM,
