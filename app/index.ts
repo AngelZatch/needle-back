@@ -11,9 +11,9 @@ const isDevEnv = process.env.NODE_ENV !== 'production';
         await application.connect(ormConfig);
 
         if (isDevEnv) {
-            await devInit(application.orm);
+            await devInit(application.DI.orm);
           } else {
-            await migrate(application.orm);
+            await migrate(application.DI.orm);
         }
         
         application.init(+PORT);
