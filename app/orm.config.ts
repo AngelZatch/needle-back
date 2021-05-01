@@ -1,4 +1,5 @@
 import { MikroORM } from '@mikro-orm/core';
+import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 
 export default {
     user: 'postgres',
@@ -9,4 +10,5 @@ export default {
     entities: ['dist/models'],
     entitiesTs: ['src/models'],
     type: 'postgresql',
+    metadataProvider: TsMorphMetadataProvider
 } as Parameters<typeof MikroORM.init>[0];
