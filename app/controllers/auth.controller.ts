@@ -8,6 +8,10 @@ const SALT_ROUNDS = 10
 
 router.post("/signup", async (request, response) => {
     const { mail, password, nickname } = request.body;
+
+    if (!!mail || !!password || !!nickname) {
+        return response.status(412).send('You need to provide a mail address, a password and a nickname to register');
+    }
     
     if (await DI.userRepository.findOne({ mail })) {
         return response.status(409).send('The mail address is invalid or already in use.')
