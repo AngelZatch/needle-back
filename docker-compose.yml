@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+    db:
+        image: postgres
+        container_name: needle_postgres
+        environment:
+            POSTGRES_PASSWORD: 63sd81za3x9c3z2
+        volumes:
+            - needle-data:/data/needle/db
+    
+    redis:
+        image: redis
+        container_name: needle_redis
+
+volumes:
+    needle-data:
