@@ -7,6 +7,8 @@ import { User } from './models/user.model';
 import ormConfig from './orm.config';
 import { devInit, migrate } from './utils/dbGenerator';
 
+require('dotenv').config();
+
 export const DI = {} as {
     orm: MikroORM,
     em: EntityManager,
