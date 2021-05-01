@@ -24,4 +24,10 @@ export class User {
 
     @ManyToMany()
     tags = new Collection<Tag>(this);
+
+    constructor(nickname: string, password: string, mail: string) {
+        this.nickname = nickname;
+        this.password = password;
+        this.mail = mail;
+    }
 }
