@@ -1,5 +1,6 @@
 import { MikroORM, EntityManager, EntityRepository, RequestContext } from '@mikro-orm/core';
 import express from 'express';
+import http from "http";
 import * as dotenv from 'dotenv';
 import { Socket, Server } from "socket.io";
 
@@ -19,6 +20,8 @@ export const DI = {} as {
 };
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 const PORT = process.env.PORT || 8000;
 const isDevEnv = process.env.NODE_ENV !== 'production';
 
@@ -43,32 +46,20 @@ const isDevEnv = process.env.NODE_ENV !== 'production';
         app.use("/users", UserController);
         app.use((_, res) => res.status(404).json({ message: 'Where are you trying to go?' }));
 
-        const server = app.listen(+PORT, () => {
-            console.log(`App has started, listening on port ${PORT}`);
-        });
-
-        const io = new Server(server);
-
         io.on('connection', (socket: Socket) => {
-
-            socket.on('auth', ({ channel, user }) => {
-                const key = `channel:${channel}`;
-
-                console.log(`user ${user} est entré sur le channel ${channel}`)
-
-                socket.join(key)
-                console.log('après join dans auth', socket.rooms)
+            socket.on('auth', ({ channel, user }: { channel: string, user: number }) => {
+                socket.join(channel)
+                socket.emit('confirm', `Welcome, user ${user}`);
             })
 
-            console.log('hors auth et disconnect', socket.rooms);
-
-            socket.on('disconnect', _ => {
-                console.log('ah, l\'est parti.')
+            socket.on('disconnect', () => {
                 console.log('disconnect', socket.rooms);
             })
         });
 
-        
+        server.listen(+PORT, () => {
+            console.log(`App has started, listening on port ${PORT}`);
+        });
 
     } catch (error) {
         console.error(error);
