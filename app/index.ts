@@ -2,7 +2,8 @@ import { MikroORM, EntityManager, EntityRepository, RequestContext } from '@mikr
 import express from 'express';
 import * as dotenv from 'dotenv';
 
-import { AuthController, UserController } from './controllers';
+import { AuthController, ChannelController, UserController } from './controllers';
+import { Channel } from './models/channel.model';
 import { Tag } from './models/tag.model';
 import { User } from './models/user.model';
 import ormConfig from './orm.config';
@@ -15,6 +16,7 @@ export const DI = {} as {
     em: EntityManager,
     userRepository: EntityRepository<User>,
     tagRepository: EntityRepository<Tag>,
+    channelRepository: EntityRepository<Channel>
 };
 
 const app = express();
@@ -27,6 +29,7 @@ const isDevEnv = process.env.NODE_ENV !== 'production';
         DI.em = DI.orm.em;
         DI.userRepository = DI.orm.em.getRepository(User);
         DI.tagRepository = DI.orm.em.getRepository(Tag);
+        DI.channelRepository = DI.orm.em.getRepository(Channel);
 
         if (isDevEnv) {
             await devInit(DI.orm);
@@ -37,6 +40,7 @@ const isDevEnv = process.env.NODE_ENV !== 'production';
         app.use(express.json())
         app.use((req, res, next) => RequestContext.create(DI.orm.em, next));
         app.use("/auth", AuthController);
+        app.use("/channels", ChannelController);
         app.use("/users", UserController);
         app.use((req, res) => res.status(404).json({ message: 'Where are you trying to go?' }));
         app.listen(+PORT, () => {

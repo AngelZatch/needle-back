@@ -1,5 +1,8 @@
 import { MikroORM } from '@mikro-orm/core';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 export default {
     user: 'postgres',
