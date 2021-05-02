@@ -1,0 +1,90 @@
+### GET /channels/
+
+GET http://localhost:8000/channels/
+
+### POST /auth/login
+
+POST http://localhost:8000/auth/login
+Content-Type: application/json
+
+{
+    "mail" : "trucbidule@gmail.com",
+    "password" : "fmdsqgnreeq mv vqr"
+}
+
+### incorrect POST /auth/login (wrong password)
+
+POST http://localhost:8000/auth/login
+Content-Type: application/json
+
+{
+    "mail" : "trucbidule@gmail.com",
+    "password" : "123"
+}
+
+### incorrect POST /auth/login (inexistant mail address)
+
+POST http://localhost:8000/auth/login
+Content-Type: application/json
+
+{
+    "mail" : "truc@gmail.com",
+    "password" : "fmdsqgnreeq mv vqr"
+}
+
+
+
+### PUT users/:id
+
+PUT http://localhost:8000/users/1
+Content-Type: application/json
+
+{
+    "mail" : "trucbidule@gmail.com",
+    "nickname" : "bidulos",
+    "tags" : [1, 2]
+}
+
+### incorrect PUT users/:id (inexistant user)
+
+PUT http://localhost:8000/users/2
+Content-Type: application/json
+
+{
+    "mail" : "trucbidule@gmail.com",
+    "nickname" : "bidulos",
+    "tags" : [1, 2]
+}
+
+### POST auth/signup
+
+POST http://localhost:8000/auth/signup
+Content-Type: application/json
+
+{
+    "mail" : "blabla@gmail.com",
+    "nickname" : "machin",
+    "password" : "fmdsqgnreeq mv vqr"
+}
+
+### incorrect POST auth/signup (no nickname)
+
+POST http://localhost:8000/auth/signup
+Content-Type: application/json
+
+{
+    "mail" : "blabla@gmail.com",
+    "nickname" : "",
+    "password" : "fmdsqgnreeq mv vqr"
+}
+
+### incorrect POST auth/signup (mail already exist)
+
+POST http://localhost:8000/auth/signup
+Content-Type: application/json
+
+{
+    "mail" : "blabla@gmail.com",
+    "nickname" : "machin",
+    "password" : "fmdsqgnreeq mv vqr"
+}
