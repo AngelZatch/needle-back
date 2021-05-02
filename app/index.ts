@@ -1,15 +1,13 @@
 import { MikroORM, EntityManager, EntityRepository, RequestContext } from '@mikro-orm/core';
 import express from 'express';
-import http from "http";
 import * as dotenv from 'dotenv';
 import { Socket, Server } from "socket.io";
 
 import { AuthController, ChannelController, UserController } from './controllers';
-import { Channel, Tag, User } from './models';
+import { Channel, Message, Tag, User } from './models';
 import ormConfig from './orm.config';
 import { devInit, migrate } from './utils/dbGenerator';
 import { createServer } from 'http';
-import { isObject } from 'util';
 
 dotenv.config();
 
@@ -49,19 +47,14 @@ const isDevEnv = process.env.NODE_ENV !== 'production';
         app.use((_, res) => res.status(404).json({ message: 'Where are you trying to go?' }));
 
         io.on('connection', (socket: Socket) => {
-            socket.on('auth', ({ channel, user }: { channel: string, user: number }) => {
-                socket.join(channel)
+            socket.on('auth', ({ channelId, user }: { channelId: string, user: number }) => {
+                socket.join(`channel-${channelId}`)
                 socket.emit('confirm', `Welcome, user ${user}`);
             })
 
-            socket.on("chat", ({ channel, message }) => {
-                console.log(socket.rooms);
-                io.to('channel-'+channel).emit('chat', message)
+            socket.on("message", ({ channelId, message }: { channelId: string, message: Message }) => {
+                io.to(`channel-${channelId}`).emit('message', message)
             })
-
-            // socket.on('disconnect', ({ channel : string }) => {
-            //     socket.leave(channel)
-            // })
         });
 
         httpServer.listen(+PORT, () => {
