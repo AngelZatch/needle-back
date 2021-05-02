@@ -4,7 +4,8 @@ import * as dotenv from 'dotenv';
 import { Socket, Server } from "socket.io";
 
 import { AuthController, ChannelController, UserController } from './controllers';
-import { Channel, Message, Tag, User } from './models';
+import { Channel, Tag, User } from './models';
+import { Message } from './models/message.model';
 import ormConfig from './orm.config';
 import { devInit, migrate } from './utils/dbGenerator';
 import { createServer } from 'http';
@@ -53,7 +54,7 @@ const isDevEnv = process.env.NODE_ENV !== 'production';
             })
 
             socket.on("message", ({ channelId, message }: { channelId: string, message: Message }) => {
-                io.to(`channel-${channelId}`).emit('message', message)
+                io.to(`channel-${channelId}`).emit('message', message);
             })
         });
 
