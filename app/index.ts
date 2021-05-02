@@ -8,6 +8,8 @@ import { AuthController, ChannelController, UserController } from './controllers
 import { Channel, Tag, User } from './models';
 import ormConfig from './orm.config';
 import { devInit, migrate } from './utils/dbGenerator';
+import { createServer } from 'http';
+import { isObject } from 'util';
 
 dotenv.config();
 
@@ -20,8 +22,8 @@ export const DI = {} as {
 };
 
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
+const httpServer = createServer(app);
+const io = new Server(httpServer);
 const PORT = process.env.PORT || 8000;
 const isDevEnv = process.env.NODE_ENV !== 'production';
 
@@ -52,12 +54,17 @@ const isDevEnv = process.env.NODE_ENV !== 'production';
                 socket.emit('confirm', `Welcome, user ${user}`);
             })
 
-            socket.on('disconnect', () => {
-                console.log('disconnect', socket.rooms);
+            socket.on("chat", ({ channel, message }) => {
+                console.log(socket.rooms);
+                io.to('channel-'+channel).emit('chat', message)
             })
+
+            // socket.on('disconnect', ({ channel : string }) => {
+            //     socket.leave(channel)
+            // })
         });
 
-        server.listen(+PORT, () => {
+        httpServer.listen(+PORT, () => {
             console.log(`App has started, listening on port ${PORT}`);
         });
 
