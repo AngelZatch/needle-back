@@ -1,11 +1,10 @@
 import { MikroORM, EntityManager, EntityRepository, RequestContext } from '@mikro-orm/core';
 import express from 'express';
 import * as dotenv from 'dotenv';
+import { Socket, Server } from "socket.io";
 
 import { AuthController, ChannelController, UserController } from './controllers';
-import { Channel } from './models/channel.model';
-import { Tag } from './models/tag.model';
-import { User } from './models/user.model';
+import { Channel, Tag, User } from './models';
 import ormConfig from './orm.config';
 import { devInit, migrate } from './utils/dbGenerator';
 
@@ -33,7 +32,7 @@ const isDevEnv = process.env.NODE_ENV !== 'production';
 
         if (isDevEnv) {
             await devInit(DI.orm);
-          } else {
+        } else {
             await migrate(DI.orm);
         }
 
@@ -42,10 +41,35 @@ const isDevEnv = process.env.NODE_ENV !== 'production';
         app.use("/auth", AuthController);
         app.use("/channels", ChannelController);
         app.use("/users", UserController);
-        app.use((req, res) => res.status(404).json({ message: 'Where are you trying to go?' }));
-        app.listen(+PORT, () => {
+        app.use((_, res) => res.status(404).json({ message: 'Where are you trying to go?' }));
+
+        const server = app.listen(+PORT, () => {
             console.log(`App has started, listening on port ${PORT}`);
         });
+
+        const io = new Server(server);
+
+        io.on('connection', (socket: Socket) => {
+
+            socket.on('auth', ({ channel, user }) => {
+                const key = `channel:${channel}`;
+
+                console.log(`user ${user} est entré sur le channel ${channel}`)
+
+                socket.join(key)
+                console.log('après join dans auth', socket.rooms)
+            })
+
+            console.log('hors auth et disconnect', socket.rooms);
+
+            socket.on('disconnect', _ => {
+                console.log('ah, l\'est parti.')
+                console.log('disconnect', socket.rooms);
+            })
+        });
+
+        
+
     } catch (error) {
         console.error(error);
         process.exit(1);
