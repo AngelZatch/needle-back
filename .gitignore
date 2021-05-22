@@ -1,4 +1,7 @@
-node_modules
 .env
 dist
 temp
+
+## Node Modules
+yarn.lock
+node_modules
