@@ -1,10 +1,12 @@
 import { Router } from "express";
 import { DI } from "../index";
 const bcrypt = require('bcrypt');
+import jwt from 'jsonwebtoken';
 import { User } from "../models/user.model";
 
 const router = Router()
 const SALT_ROUNDS = 10
+const JWTSecret = process.env.JWT_SECRET || 'localSecret'
 
 router.post("/signup", async (request, response) => {
     const { mail, password, nickname } = request.body;
@@ -23,6 +25,16 @@ router.post("/signup", async (request, response) => {
         const user = new User(nickname, hashedPassword, mail);
         await DI.userRepository.persistAndFlush(user);
 
+        const accessToken = jwt.sign(
+            { userId: user.id },
+            JWTSecret,
+            {
+                expiresIn: '7d'
+            }
+        )
+
+        response.cookie('accessToken', accessToken)
+
         response.json(user);
     } catch (error) {
         return response.status(400).json({ message: error.message });
@@ -40,10 +52,26 @@ router.post('/login', async (request, response) => {
         const user = await DI.userRepository.findOneOrFail({ mail });
         await bcrypt.compare(password, user!.password);
 
+        const accessToken = jwt.sign(
+            { userId: user.id },
+            JWTSecret,
+            {
+                expiresIn: '7d'
+            }
+        )
+
+        response.cookie('accessToken', accessToken)
+
         response.json(user);
     } catch (error) {
         return response.status(400).json({ message: 'Your credentials are invalid' });
     }
+})
+
+router.post('/logout', async (request, response) => {
+    response.clearCookie('accessToken')
+    response.clearCookie('refreshToken')
+    response.status(200).send('')
 })
 
 export const AuthController = router;

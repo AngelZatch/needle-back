@@ -1,5 +1,6 @@
 import { MikroORM, EntityManager, EntityRepository, RequestContext } from '@mikro-orm/core';
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
 import { Socket, Server } from "socket.io";
 
@@ -40,6 +41,7 @@ const isDevEnv = process.env.NODE_ENV !== 'production';
         }
 
         app.use(express.json())
+        app.use(cookieParser())
         app.use((req, res, next) => RequestContext.create(DI.orm.em, next));
         app.use("/auth", AuthController);
         app.use("/channels", ChannelController);
