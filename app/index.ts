@@ -8,6 +8,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
 import { Socket, Server } from 'socket.io';
+import cors = require('cors');
 
 import { createServer } from 'http';
 import {
@@ -29,11 +30,27 @@ export const DI = {} as {
   channelRepository: EntityRepository<Channel>;
 };
 
-const app = express();
-const httpServer = createServer(app);
-const io = new Server(httpServer);
 const PORT = process.env.PORT || 8000;
 const isDevEnv = process.env.NODE_ENV !== 'production';
+const corsOptions = {
+  origin: !isDevEnv ? '/needle.tv/?$/' : 'http://localhost:3000',
+  credentials: true,
+};
+
+const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: corsOptions.origin,
+    allowedHeaders: [
+      'Access-Control-Allow-Headers',
+      'Origin',
+      'X-Requested-With',
+      'Content-Type',
+      'Allow',
+    ],
+  },
+});
 
 (async () => {
   try {
@@ -49,6 +66,7 @@ const isDevEnv = process.env.NODE_ENV !== 'production';
       await migrate(DI.orm);
     }
 
+    app.use(cors(corsOptions));
     app.use(express.json());
     app.use(cookieParser());
     app.use((req, res, next) => RequestContext.create(DI.orm.em, next));

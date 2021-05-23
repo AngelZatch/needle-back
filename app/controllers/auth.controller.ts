@@ -72,7 +72,7 @@ router.post('/login', async (request, response) => {
     response.json(user);
   } catch (error) {
     return response
-      .status(400)
+      .status(401)
       .json({ message: 'Your credentials are invalid' });
   }
 });
