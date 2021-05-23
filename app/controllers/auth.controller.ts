@@ -63,14 +63,8 @@ router.post('/login', async (request, response) => {
     });
 
     response.cookie('accessToken', accessToken, {
-      path: '/',
       httpOnly: true,
-      signed: false,
-      sameSite: 'none',
-      secure: true,
     });
-
-    response.cookie('isAuth', '', { httpOnly: false });
 
     response.json(user);
   } catch (error) {
@@ -83,7 +77,6 @@ router.post('/login', async (request, response) => {
 router.post('/logout', async (request, response) => {
   response.clearCookie('accessToken');
   response.clearCookie('refreshToken');
-  response.clearCookie('isAuth');
   response.status(200).send('');
 });
 
