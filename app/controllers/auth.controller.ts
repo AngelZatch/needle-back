@@ -64,7 +64,7 @@ router.post('/login', async (request, response) => {
     response.cookie('accessToken', accessToken, {
       path: '/',
       httpOnly: true,
-      signed: true,
+      signed: false,
       sameSite: true,
       secure: true,
     });
