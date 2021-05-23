@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { DI } from '../index';
+import isAuthenticated from '../middlewares/auth.middleware';
 import { User } from '../models/user.model';
 
 const bcrypt = require('bcrypt');
@@ -65,9 +66,11 @@ router.post('/login', async (request, response) => {
       path: '/',
       httpOnly: true,
       signed: false,
-      sameSite: true,
+      sameSite: 'none',
       secure: true,
     });
+
+    response.cookie('isAuth', '', { httpOnly: false });
 
     response.json(user);
   } catch (error) {
@@ -80,7 +83,13 @@ router.post('/login', async (request, response) => {
 router.post('/logout', async (request, response) => {
   response.clearCookie('accessToken');
   response.clearCookie('refreshToken');
+  response.clearCookie('isAuth');
   response.status(200).send('');
+});
+
+router.get('/me', isAuthenticated, async (request, response) => {
+  const user = await DI.userRepository.findOne({ id: response.locals.userId });
+  response.status(200).send(user);
 });
 
 export const AuthController = router;
