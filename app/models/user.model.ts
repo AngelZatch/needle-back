@@ -1,33 +1,40 @@
-import { Collection, Entity, ManyToMany, PrimaryKey, Property, Unique } from "@mikro-orm/core";
-import { Tag } from "./tag.model";
+import {
+  Collection,
+  Entity,
+  ManyToMany,
+  PrimaryKey,
+  Property,
+  Unique,
+} from '@mikro-orm/core';
+import { Tag } from './tag.model';
 
 @Entity()
 export class User {
-    @PrimaryKey()
-    id!: number;
+  @PrimaryKey()
+  id!: number;
 
-    @Property()
-    @Unique()
-    mail!: string;
+  @Property()
+  @Unique()
+  mail!: string;
 
-    @Property({ hidden: true })
-    password!: string;
+  @Property({ hidden: true })
+  password!: string;
 
-    @Property()
-    nickname!: string;
+  @Property()
+  nickname!: string;
 
-    @Property({ onCreate: () => new Date() })
-    createdAt: Date = new Date();
+  @Property({ onCreate: () => new Date() })
+  createdAt: Date = new Date();
 
-    @Property({ onUpdate: () => new Date() })
-    updatedAt: Date = new Date();
+  @Property({ onUpdate: () => new Date() })
+  updatedAt: Date = new Date();
 
-    @ManyToMany()
-    tags = new Collection<Tag>(this);
+  @ManyToMany()
+  tags = new Collection<Tag>(this);
 
-    constructor(nickname: string, password: string, mail: string) {
-        this.nickname = nickname;
-        this.password = password;
-        this.mail = mail;
-    }
+  constructor(nickname: string, password: string, mail: string) {
+    this.nickname = nickname;
+    this.password = password;
+    this.mail = mail;
+  }
 }
